@@ -9,29 +9,42 @@
 
 
 library(shiny)
-library(datasets)
 library(caret)
-
-data(iris)
+library(randomForest)
+library(RCurl)
+library(rsconnect)
+iris <- getURL("https://raw.githubusercontent.com/uiuc-cse/data-fa14/gh-pages/data/iris.csv")
+iris <- read.csv(text = iris)
 df <- as.data.frame(iris)
 
 
-inTrain <- createDataPartition(y=iris$Species,
-                               p=0.7, list=FALSE)
-training <- iris[inTrain,]; testing <- iris[-inTrain,]
-dim(training); dim(testing)
+#inTrain <- createDataPartition(y=iris$Species,
+                               #p=0.7, list=FALSE)
+#training <- iris[inTrain,]; testing <- iris[-inTrain,]
+#dim(training); dim(testing)
 
-modFit <- train(Species ~ ., method="rf",prox=TRUE, data=training)
+modFit <- train(species ~ ., method="rf",prox=TRUE, data=df)
+#modFit <- train(Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width , method="glm", data=iris)
+#getTree(modFit$finalModel,k=2)
+#irisP <- classCenter(training[,c(1,2)], training$Species, modFit$finalModel$prox)
+#irisP <- as.data.frame(irisP); irisP$Species <- rownames(irisP)
+
 
 shinyServer(
   function(input, output) { 
     #pred = predict(modFit, data)
     #output$prediction <- renderPrint ({as.string(pred)})
     output$prediction <- renderPrint ({
-      sl = input$sl
-      sw = input$sw
-      pl = input$pl
-      pw = input$pw
-      predict(modFit,pw)})
-  }
-)
+      sepal_length = input$sepal_length
+      sepal_width = input$sepal_width
+      petal_length = input$petal_length
+      petal_width = input$petal_width
+      #species = input$species
+      predict(modFit,data.frame(sepal_length,sepal_width,petal_length,petal_width))})
+      
+    }
+  )
+    
+
+
+#r<- reactive(predict(modFit, df[df$Sepal.Length == input$sl & df$Sepal.Width == input$sw & df$Petal.Length == input$pl & df$Petal.Width == input$pw & df$Species =="setosa",1:3])) levels(r)[r]
