@@ -13,25 +13,46 @@ library(caret)
 library(datasets)
 df <- as.data.frame(iris)
 
-shinyUI( pageWithSidebar(
-  headerPanel( "Exploring the iris dataset"),
-  sidebarPanel(
-    img(src="https://www.pinterest.com/pin/468796642432600760/"),
-    
-    numericInput( "sepal_length", "sepal_length", 1, min = 4.3, max= 7.9, step = 0.1),
-    numericInput( "sepal_width", "sepal_width", 2, min = 2.0, max= 4.4, step = 0.1),
-    numericInput( "petal_length", "petal_length", 3, min = 1.0, max= 6.9, step = 0.1),
-    numericInput( "petal_width", "petal_width", 2, min = 0.1, max= 2.5, step = 0.1),
-    #selectInput( "species", "species", levels(df[1,3]), "setosa"),
-    submitButton('Submit')
-    #h5("Species ?"),
-    #textOutput("result")
-  ),
-  mainPanel(
-    h3("Results of prediction"),
-    h4 ('Your Flower\'s Predicted species:'),
-    textOutput("prediction")
-  )
-)
 
-)
+
+# Define UI for IRIS application
+shinyUI(pageWithSidebar(
+  
+  # Application title
+  headerPanel("Reuben Addison - IRIS characteristics: Plotting Two Variables"),
+  
+  # Sidebar with controls to select the variables to plot 
+  sidebarPanel(
+    
+    h3("* Select two varibles to be ploted:"),
+    selectInput("sepal_length", "First variable:",
+                list("sepal_length" = "sepal_length",
+                     "sepal_width"  = "sepal_width",
+                     "petal_length" = "petal_length",
+                     "petal_width"  = "petal_width")),
+    
+    selectInput("sepal_width", "Second variable:",
+                list("sepal_length" = "sepal_length",
+                     "sepal_width"  = "sepal_width",
+                     "petal_length" = "petal_length",
+                     "petal_width"  = "petal_width"))
+  ),
+  
+  mainPanel(
+    tabsetPanel(
+      tabPanel("Plot", 
+               h3 ("* Here, The plot of the two selected variables:"),
+               h3(textOutput("caption")),
+               plotOutput("plot")),
+      
+      tabPanel("Readme", 
+               h3 ("* This gives documentation about the application:"),
+               h3 (""),
+               h3("This application gives a plot two variables from IRIS data set."),
+               verbatimTextOutput("head")),
+      h3 (""),
+      h3 ("You first need to select two variables from the options provided."),
+      h3 ("After which you view  the plot from the plot panel using species as colors."),
+      h3 ("")
+    ))
+))
